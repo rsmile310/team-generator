@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var data = [
+  let data = [
     {
       name: "Juan",
       performance: 10,
@@ -81,22 +81,15 @@ $(document).ready(function () {
       performance: 2,
     },
   ];
-  var performanceArr = [];
   var groupNum = 3;
   var flag = [];
-  var outdata = [];
   $("#totalNum").html(data.length);
   data.map((e, index) => {
-    $("#input-tbl tbody").append(
-      `<tr>
-        <td>` +
-        e.name +
-        `</td><td>` +
-        e.performance +
-        `</td>
-    <tr/>`
-    );
-    performanceArr.push(e.performance);
+    console.log(index)
+    if (index < data.length-1)
+      $("#inputData").append(e.name + " " + e.performance + "\n");
+    else $("#inputData").append(e.name + " " + e.performance);
+    // performanceArr.push(e.performance);
   });
 
   function groupTasks(tasks, groupCount) {
@@ -113,7 +106,7 @@ $(document).ready(function () {
         return groups;
       }, initial);
   }
-  result = groupTasks(performanceArr, groupNum); // distribute them into 10 sub arrays with closest sums
+  // distribute them into 10 sub arrays with closest sums
 
   function groupBy(list, keyGetter) {
     const map = new Map();
@@ -140,13 +133,29 @@ $(document).ready(function () {
   }
 
   $("#startBtn").click(function () {
+    var performanceArr = [];
+    flag = [];
+    var inputDataArr = $("#inputData").val().split("\n");
+    var data = [];
+    for (var i = 0; i < inputDataArr.length; i++) {
+      data.push({
+        name: inputDataArr[i].split(" ")[0],
+        performance: Number(inputDataArr[i].split(" ")[1]),
+      });
+    }
+    $("#totalNum").text(data.length);
+    data.map((e, index) => {
+      performanceArr.push(e.performance);
+    });
     data = shuffleArray(data);
-    console.log(data);
+
     const groupedData = groupBy(data, (e) => e.performance);
     $(".output-box-body>div").html("");
-    flag = [];
+
     groupNum = $("#groupNum").val();
+
     result = groupTasks(performanceArr, parseInt(groupNum));
+
     for (var i = 0; i < result.length; i++) {
       $(".output-box-body>div").append(
         `<div class="output-card` +
@@ -160,16 +169,17 @@ $(document).ready(function () {
           `</div></div>`
       );
       for (var j = 0; j < result[i].length; j++) {
+        // console.log(groupedData);
         flag.push(result[i][j]);
-        var temp = flag.filter((num) => num === result[i][j]).length;
+        var tempp = flag.filter((num) => num === result[i][j]).length;
 
         $(".output-card" + Number(i + 1))
           .find(".output-card-body")
           .append(
             `<p>` +
-              groupedData.get(result[i][j])[temp - 1].name +
+              groupedData.get(result[i][j])[tempp - 1].name +
               `&nbsp;&nbsp;&nbsp;` +
-              groupedData.get(result[i][j])[temp - 1].performance +
+              groupedData.get(result[i][j])[tempp - 1].performance +
               `</p>`
           );
       }
